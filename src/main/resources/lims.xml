@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lims.demo.lims_Users.Mapper.Users">
+<resultMap id="user_menu" type="lims.demo.lims_Role.Model.lims_menu">
+    <result property="menu_Id" column="menu_id"></result>
+    <result property="menu_Name" column="lims_menu_Name"></result>
+    <result property="menu_Path" column="lims_menu_Path"></result>
+    <result property="menu_Describe" column="lims_menu_Describe"></result>
+</resultMap>
+    
+    <select id="user_menu" resultType="java.util.HashMap">
+        SELECT * FROM lims_menu where menu_id in
+(select menu_id from lims_menu_role inner join lims_role on lims_menu_role.role_id=lims_role.role_id where
+              lims_role.role_id in (select role_id from lims_user_role inner join lims_userson lims_users.users_id =
+                                                                    lims_user_role.user_id where lims_users.users_id =#{userId}))
+    </select>
+</mapper>
