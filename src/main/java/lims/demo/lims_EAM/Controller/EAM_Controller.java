@@ -6,6 +6,7 @@ import lims.demo.lims_EAM.Model.lims_EAM_menu;
 import lims.demo.lims_EAM.Service.EAM_service;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -104,4 +105,42 @@ public class EAM_Controller {
 
         }
 
+
+        @RequestMapping("/updateEam/{eam_Id}")
+        public SysJson updateEam(@PathVariable("eam_Id") int Id,String eamEdit_lims_EAM_name,String eamEdit_lims_EAM_status){
+            SysJson sysJson = new SysJson();
+            String msg ="updateEam function use success";
+            System.err.println(msg);
+            boolean b =false;
+            b = eam_service.updateEam(eamEdit_lims_EAM_name,eamEdit_lims_EAM_status,Id);
+            if(b){
+                msg="修改成功";
+                sysJson.setStatus(true);
+                sysJson.setMessage(msg);
+            }else{
+                sysJson.setStatus(false);
+                sysJson.setMessage("修改失败");
+            }
+            return sysJson;
+        }
+
+
+        @RequestMapping("/deleteEam/{id}")
+        public SysJson deleteEam(@PathVariable("id") int id){
+            SysJson sysJson = new SysJson();
+            String msg ="deleteEam function use success";
+            System.err.println(msg);
+            boolean b =false;
+            b = eam_service.deleteEam(id);
+            if(b){
+                msg="删除成功";
+                sysJson.setStatus(true);
+                sysJson.setMessage(msg);
+            }else{
+                sysJson.setStatus(false);
+                sysJson.setMessage("删除失败");
+            }
+
+            return sysJson;
+        }
 }

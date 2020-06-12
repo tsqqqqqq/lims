@@ -7,6 +7,7 @@ public class lims_role {
     private int role_id;//主键
     private String role_name;//权限名
     private String role_describe;//权限描述
+    private int role_Type;//权限类型 0代表目录权限， 1代表功能按钮操作权限
 
     public int getRole_id() {
         return role_id;

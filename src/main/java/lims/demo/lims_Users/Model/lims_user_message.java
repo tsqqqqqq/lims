@@ -8,7 +8,7 @@ public class lims_user_message {
     private String lims_user_message_name;//用户姓名
     private int lims_user_message_age;//用户年龄
     private String lims_user_message_sex;//用户性别
-    private int user_id;//关联账号表
+    private int users_id;//关联账号表
 
 
     public int getId() {
@@ -43,11 +43,11 @@ public class lims_user_message {
         this.lims_user_message_sex = lims_user_message_sex;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public int getUsers_id() {
+        return users_id;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setUsers_id(int user_id) {
+        this.users_id = user_id;
     }
 }

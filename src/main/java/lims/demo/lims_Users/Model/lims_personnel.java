@@ -7,7 +7,7 @@ public class lims_personnel {
         private int personnel_id;//主键
         private String lims_personnel_check;//考勤日期
         private int lims_personnel_status;//考勤状态
-        private int user_id;//用户
+        private int users_id;//用户
 
     public int getPersonnel_id() {
         return personnel_id;
@@ -33,11 +33,11 @@ public class lims_personnel {
         this.lims_personnel_status = lims_personnel_status;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public int getUsers_id() {
+        return users_id;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setUsers_id(int users_id) {
+        this.users_id = users_id;
     }
 }

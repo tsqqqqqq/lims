@@ -22,10 +22,10 @@ public class Notice_type_service {
 
       return notice_mapper.queryNoticeType();
     }
-    public List<lims_notice> QueryNoticeTypeList(int noticeTypeId ,int pageSize,int pageNow)
+    public List<lims_notice> QueryNoticeTypeList(int pageSize,int pageNow)
     {
         pageNow = (pageNow-1)*pageSize;
-        return notice_mapper.queryNoticeTypeList(noticeTypeId,pageSize,pageNow);
+        return notice_mapper.queryNoticeTypeList(pageSize,pageNow);
     }
 
     public List<lims_notice> QueryNotice()
@@ -55,6 +55,13 @@ public class Notice_type_service {
         return notice_mapper.CreateNotice(notice);
     }
 
+    public int count(){
+        return notice_mapper.count();
+    }
 
+    public boolean update(lims_notice notice){
+        return notice_mapper.update(notice);
+    }
 
+    public boolean noticeDelete(int noticeId){return notice_mapper.noticeDelete(noticeId);}
 }

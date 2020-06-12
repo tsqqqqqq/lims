@@ -7,6 +7,15 @@ public class lims_users {
     private int users_id;//主键
     private String users;//账号
     private String passwords;//密码
+    private int parent;
+
+    public int getParent() {
+        return parent;
+    }
+
+    public void setParent(int parent) {
+        this.parent = parent;
+    }
 
     public int getUsers_id() {
         return users_id;

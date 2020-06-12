@@ -14,23 +14,53 @@ import java.util.List;
 @Component
 public interface EAM_Mapper {
 
+    /**
+     * 查询设备目录
+     * @return
+     */
     @Select("select * from lims_EAM_menu")
     public List<lims_EAM_menu> QueryEAM_menu();
 
+
+    /**
+     * 分页查询
+     * @param pageSize
+     * @param pageNow
+     * @return
+     */
     @Select("select e.*,em.inventory from lims_eam e inner join lims_eam_menu em on e.eam_menu_id = em.eam_menu_id  limit #{pageNow},#{pageSize}")
     public List<HashMap<String,Object>> QueryEAM(int pageSize,int pageNow);
 
+    /**
+     * 统计总数
+     * @return
+     */
     @Select("select count(EAM_id) from lims_eam")
     public int CountEam();
 
+    /**
+     * 查询设备类目状态
+     * @param EAM_menu_Id
+     * @return
+     */
     @Select("select count(EAM_id) from lims_eam where EAM_menu_Id = #{EAM_menu_Id}")
     public int QueryInventoryEam(int EAM_menu_Id);
 
+
+    /**
+     * 修改类目状态
+     * @param EAM_menu_id
+     * @param inventory
+     * @return
+     */
     @Update("update  lims_EAM_menu set inventory = #{inventory} where EAM_menu_id = #{EAM_menu_id}")
     public boolean Update_EAM_menu_inventory(int EAM_menu_id,int inventory);
 
 
-
+    /**
+     *
+     * @return
+     */
     @Select("select EAM_menu_id , count(EAM_menu_id) as inventory from lims_eam where lims_EAM_status!=1 and EAM_id not in (select EAM_id from lims_eam_out_return) group by EAM_menu_id;")
     public List<lims_EAM_menu> QueryEAM_inventory();
 
@@ -49,4 +79,12 @@ public interface EAM_Mapper {
 
     @Update("update lims_EAM_out_return  set return_date = now() , return_status =#{return_status} where out_return_id =#{out_return_id}")
     public boolean Update_EAM_out_return(lims_EAM_out_return lims_eam_out_return);
+
+
+    @Update("update lims_Eam set lims_EAM_name =#{name}, lims_EAM_status=#{status} where EAM_id=#{id}")
+    public boolean updateEam(String name,String status,int id);
+
+
+    @Delete("delete from lims_Eam where eam_id = #{id}")
+    public boolean deleteEam(int id);
 }

@@ -6,6 +6,7 @@ import lims.demo.lims_notice.Model.lims_notice;
 import lims.demo.lims_notice.Model.lims_notice_type;
 import lims.demo.lims_notice.Service.Notice_type_service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,6 +34,7 @@ public class lims_notice_Controller {
         if (sysJson.getResult() != null)
         {
             sysJson.setStatus(true);
+
         }
         else
         {
@@ -44,24 +46,20 @@ public class lims_notice_Controller {
 
     /**
      * 查询某一类型的所有通知
-     * @param noticeTypeId
+     * @param
      * @param pageSize
      * @param pageNow
      * @return
      */
     @RequestMapping("/noticeTypeList")
-    public SysJson noticeTypeList(int noticeTypeId,int pageSize,int pageNow){
-        if(noticeTypeId==0){
-            sysJson.setStatus(false);
-            sysJson.setMessage("查询失败");
-        }
+    public SysJson noticeTypeList(int pageSize,int pageNow){
         HashMap<String,Object> map = new HashMap<String, Object>();
         List<lims_notice> list = new ArrayList<lims_notice>();
-        list=notice_type_service.QueryNoticeTypeList(noticeTypeId,pageSize,pageNow);
+        list=notice_type_service.QueryNoticeTypeList(pageSize,pageNow);
         if(list.size()>0){
             sysJson.setStatus(true);
             sysJson.setMessage("查询成功");
-            map.put("countList",list.size());
+            map.put("countList",notice_type_service.count());
             map.put("list",list);
             sysJson.setResult(map);
         }else{
@@ -173,6 +171,39 @@ public class lims_notice_Controller {
 
             }
         }
+        return sysJson;
+    }
+
+    /**
+     * 修改通知信息
+     * @param noticeId
+     * @param notice
+     * @return
+     */
+    @RequestMapping("/noticeUpdate/{noticeId}")
+    public SysJson noticeUpdate(@PathVariable("noticeId") int noticeId , lims_notice notice){
+            notice.setNotice_id(noticeId);
+            if(notice_type_service.update(notice)){
+                sysJson.setStatus(true);
+                sysJson.setMessage("修改成功");
+            }else{
+                sysJson.setStatus(false);
+                sysJson.setMessage("修改失败");
+            }
+
+        return sysJson;
+    }
+
+    @RequestMapping("/noticeDelete")
+    public SysJson noticeDelete(int noticeId){
+        if(notice_type_service.noticeDelete(noticeId)){
+            sysJson.setStatus(true);
+            sysJson.setMessage("删除成功");
+        }else{
+            sysJson.setStatus(false);
+            sysJson.setMessage("删除失败");
+        }
+
         return sysJson;
     }
 }

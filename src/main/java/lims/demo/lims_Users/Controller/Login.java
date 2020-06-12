@@ -3,12 +3,12 @@ package lims.demo.lims_Users.Controller;
 import lims.demo.Base.SysJson;
 import lims.demo.lims_Users.Model.lims_user_message;
 import lims.demo.lims_Users.Service.Users_service;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import lims.demo.lims_Users.Model.lims_users;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,12 +42,12 @@ public class Login {
                 sysJson.setMessage("密码为空 无法登陆");
                 sysJson.setStatus(b);
             }
-        lims_users lims_users =new lims_users();
-            lims_users=users_service.Login(users,passwords);
-            if(lims_users!=null) {
+       HashMap<String,Object> map = new HashMap<String, Object>();
+            map=users_service.Login(users,passwords);
+            if(map!=null) {
                 sysJson.setMessage("登陆成功");
                 sysJson.setStatus(true);
-                sysJson.setResult(lims_users);
+                sysJson.setResult(map);
 
             }else
             {
@@ -55,9 +55,6 @@ public class Login {
                 sysJson.setStatus(b);
 
             }
-
-
-
             return sysJson;
     }
 
@@ -95,14 +92,14 @@ public class Login {
 
     /**
      * 查询某一用户信息
-     * @param user_id
+     * @param id
      * @return
      */
-    @RequestMapping("/QueryMessage")
-    public SysJson QueryMessage(int user_id)
+    @RequestMapping("/QueryMessage/{id}")
+    public SysJson QueryMessage(@PathVariable("id") int id)
     {
         SysJson sysJson = new SysJson();
-        sysJson.setResult(users_service.QueryMessage(user_id));
+        sysJson.setResult(users_service.QueryMessage(id));
         if(sysJson.getResult()!=null)
         {
             sysJson.setStatus(true);
@@ -122,15 +119,15 @@ public class Login {
      * @param pageNow
      * @return
      */
-    @RequestMapping("/queryMessageList")
-    public SysJson queryMessageList(int pageSize,int pageNow)
+    @RequestMapping("/queryMessageList/{parent}")
+    public SysJson queryMessageList(@PathVariable("parent") int parent, int pageSize,int pageNow)
     {
         SysJson sysJson = new SysJson();
         HashMap<String,Object> map = new HashMap<String,Object>();
         int countList=users_service.countMessage();
         if(countList>0) {
             List<lims_user_message> list = new ArrayList<lims_user_message>();
-            list= users_service.queryMessageList(pageSize,pageNow);
+            list= users_service.queryMessageList(parent,pageSize,pageNow);
             if(list!=null||list.size()>0)
             {
                 sysJson.setStatus(true);
@@ -160,11 +157,11 @@ public class Login {
      * @param userId
      * @return
      */
-    @RequestMapping("/userRole")
-    public SysJson userRole(int userId)
+    @RequestMapping("/userRole/{userId}")
+    public SysJson userRole(@PathVariable("userId") int userId)
     {
         SysJson sysJson = new SysJson();
-        if(userId<0)
+        if(userId==0)
         {
             sysJson.setStatus(false);
             sysJson.setMessage("查询失败 userId不存在或为空");
@@ -176,4 +173,72 @@ public class Login {
         }
         return sysJson;
     }
+
+    @RequestMapping("/editUsersMessageName/{userId}")
+    public SysJson editUsersMessageName(@PathVariable("userId") int userId,String newName){
+        SysJson sysJson = new SysJson();
+        boolean b = users_service.editUsersMessageName(newName, userId);
+        if(b){
+            sysJson.setStatus(true);
+            sysJson.setMessage("修改成功");
+        }else{
+            sysJson.setStatus(false);
+            sysJson.setMessage("修改失败");
+        }
+
+        return sysJson;
+    }
+
+    @RequestMapping("/insertUsers")
+    public SysJson insertUsers(@RequestBody Object params){
+        SysJson sysJson = new SysJson();
+        String msg = "insertUsers fun use success";
+        System.err.println(msg);
+        JSONObject obj = JSONObject.fromObject(params);
+        //获取参数
+        String users = (String) obj.get("users");
+        String passwords = (String)obj.get("passwords");
+        String name = (String)obj.get("lims_user_message_name");
+        String sex =(String) obj.get("lims_user_message_sex");
+        String age = (String)obj.get("lims_user_message_age");
+        int parentId = obj.getInt("parent");
+
+        System.err.println(users+passwords+name+sex+age);
+
+        msg="用户名或密码为空";
+        //判断结果
+        boolean userB = false;
+        if(!passwords.equals("")&&passwords!=null&&!users.equals("")&&users!=null){
+            lims_users users1 = new lims_users();
+            users1.setUsers(users);
+            users1.setPasswords(passwords);
+            users1.setParent(parentId);
+            userB=users_service.insertUsers(users1);
+        }
+        //添加用户资料
+        boolean messageB=false;
+        if(userB){
+            msg="登录信息添加成功";
+            int users_Id = users_service.queryUsers_Id(users,passwords);
+            lims_user_message message = new lims_user_message();
+            message.setLims_user_message_name(name);
+            message.setLims_user_message_age(Integer.parseInt(age));
+            message.setLims_user_message_sex(sex);
+            message.setUsers_id(users_Id);
+            messageB=users_service.insertMessage(message);
+        }
+
+        if(userB&&messageB){
+            sysJson.setStatus(true);
+            sysJson.setMessage(msg);
+        }else {
+            sysJson.setStatus(false);
+            sysJson.setMessage("添加失败："+msg);
+        }
+
+        return sysJson;
+    }
+
+
+
 }

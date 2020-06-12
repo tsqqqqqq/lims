@@ -44,20 +44,31 @@ public class role_Controller {
         return sysJson;
     }
 
+    /**
+     * 分配权限
+     * @param menuList
+     * @param userId
+     * @return
+     */
     @RequestMapping("/allocationRole")
-    public SysJson allocationRole(@RequestParam(value="menuList[]")int[] menuList, int userId)
+    public SysJson allocationRole(@RequestParam(value="menuList[]",required = false)int[] menuList, int userId)
     {
-        boolean b = role_service.allocationRole(menuList,userId);
-        if(b)
-        {
-            sysJson.setStatus(b);
-            sysJson.setMessage("分配成功");
+        boolean b=false;
+        String msg = "allocationRole  fun use success";
+        System.err.println(msg);
+        if(menuList==null){
+            b = role_service.deleteRole(userId);
+            msg="用户权限清空成功。";
+        }else {
+            b = role_service.allocationRole(menuList, userId);
+            msg="用户权限分配成功。";
         }
-        else
-        {
+        if (b) {
             sysJson.setStatus(b);
-            sysJson.setMessage("分配失败");
+        } else {
+            sysJson.setStatus(b);
         }
+        sysJson.setMessage(msg);
         return sysJson;
     }
 }
